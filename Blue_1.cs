@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab8
+namespace Lab_8
 {
     public class Blue_1 : Blue
     {
@@ -85,10 +85,11 @@ namespace Lab8
             for (int i = 0; i < _output.Length; i++)
             {
                 if (i > 0)
-                    result += "\n";
+                    result += Environment.NewLine;
                 result += _output[i];
             }
             return result;
         }
+
     }
 }

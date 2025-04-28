@@ -1,75 +1,61 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Lab8
+namespace Lab_8
 {
     public class Blue_2 : Blue
     {
         private string _output;
-        private string _sequence;
+        private string _filter;
 
-        public string Output
+        public Blue_2(string input, string filter) : base(input)
         {
-            get { return _output; }
-            private set { _output = value; }
+            _filter = filter;
+            _output = null;
         }
 
-        public Blue_2(string input, string sequence) : base(input)
-        {
-            _sequence = sequence.ToLower();
-            _output = string.Empty;
-        }
+        public string Output => _output;
 
         public override void Review()
         {
-            if (Input == null || _sequence == null)
-            {
-                _output = "";
-                return;
-            }
+            if (string.IsNullOrEmpty(Input) || string.IsNullOrEmpty(_filter)) return;
 
-
-            string[] words = Input.Split(new char[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
+            string[] words = Input.Split(' ');
             string result = "";
+            string separator = "";
 
-            foreach (string word in words)
+            foreach (var word in words)
             {
-                string cleanWord = RemovePunctuation(word);
+                if (string.IsNullOrWhiteSpace(word)) continue;
 
-                if (!cleanWord.ToLower().Contains(_sequence))
+                if (!word.ToLower().Contains(_filter.ToLower()))
                 {
-                    result += word + " ";
+                    result += separator + word;
+                    separator = " ";
+                }
+                else
+                {
+                    if (word.Length > 0 && !char.IsLetter(word[0]))
+                    {
+                        result += separator + word[0] + word[0];
+                        separator = " ";
+                    }
+                    if (word.Length > 0 && !char.IsLetter(word[word.Length - 1]))
+                    {
+                        result += word[word.Length - 1];
+                        separator = " ";
+                    }
                 }
             }
 
-            result = result.Trim();
-
-            Output = result;
-        }
-
-        private string RemovePunctuation(string word)
-        {
-            char[] punctuations = { '.', '!', '?', ',', ':', '"', ';', '–', '(', ')', '[', ']', '{', '}', '/' };
-            string result = "";
-
-            foreach (char c in word)
-            {
-                if (Array.IndexOf(punctuations, c) == -1)
-                {
-                    result += c;
-                }
-            }
-
-            return result;
+            _output = result.Trim();
         }
 
         public override string ToString()
         {
-            return Output;
+            if (string.IsNullOrEmpty(_output))
+                return string.Empty;
+            else
+                return _output;
         }
     }
 }

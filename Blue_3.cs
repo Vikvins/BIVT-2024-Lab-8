@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab8
+
+namespace Lab_8
 {
     public class Blue_3 : Blue
     {
@@ -12,115 +13,87 @@ namespace Lab8
 
         public (char, double)[] Output
         {
-            get { return _output; }
-            private set { _output = value; }
+            get
+            {
+                if (_output == null) return null;
+                (char, double)[] copy = new (char, double)[_output.Length];
+                Array.Copy(_output, copy, _output.Length);
+                return copy;
+            }
         }
 
         public Blue_3(string input) : base(input)
         {
-            _output = new (char, double)[0];
+            _output = null;
         }
 
         public override void Review()
         {
-            if (Input == null)
+            if (string.IsNullOrEmpty(Input))
             {
-                _output = new (char, double)[0];
+                _output = null;
                 return;
             }
 
-            string[] words = Input.Split(new char[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
+            int[] counts = new int[char.MaxValue]; 
             int totalWords = 0;
-            int[] letterCounts = new int[char.MaxValue];
 
-            foreach (string word in words)
+            int i = 0;
+            while (i < Input.Length)
             {
-                string cleanWord = RemovePunctuation(word);
-                if (cleanWord.Length == 0)
-                    continue;
+                
+                while (i < Input.Length && !char.IsLetter(Input[i])) i++;
 
-                char firstChar = char.ToLower(cleanWord[0]);
-
-                if (char.IsLetter(firstChar)) 
+             
+                if (i < Input.Length && char.IsLetter(Input[i]))
                 {
-                    letterCounts[firstChar]++;
+                    char c = char.ToLower(Input[i]);
+                    counts[c]++;
                     totalWords++;
+
+                   
+                    while (i < Input.Length && Input[i] != ' ') i++;
                 }
             }
 
-            if (totalWords == 0)
+    
+            int unique = 0;
+            for (int j = 0; j < counts.Length; j++)
             {
-                _output = new (char, double)[0];
-                return;
+                if (counts[j] > 0)
+                    unique++;
             }
 
-            int count = 0;
-            for (int i = 0; i < letterCounts.Length; i++)
-            {
-                if (letterCounts[i] > 0)
-                    count++;
-            }
-
-            (char, double)[] result = new (char, double)[count];
+            _output = new (char, double)[unique];
             int index = 0;
-            for (int i = 0; i < letterCounts.Length; i++)
+            for (int j = 0; j < counts.Length; j++)
             {
-                if (letterCounts[i] > 0)
+                if (counts[j] > 0)
                 {
-                    double percentage = (double)letterCounts[i] * 100.0 / totalWords;
-                    result[index] = ((char)i, percentage);
-                    index++;
+                    double percent = Math.Round(counts[j] * 100.0 / totalWords, 4);
+                    _output[index++] = ((char)j, percent);
                 }
             }
 
-            for (int i = 0; i < result.Length - 1; i++)
+            Array.Sort(_output, (a, b) =>
             {
-                for (int j = i + 1; j < result.Length; j++)
-                {
-                    if (result[i].Item2 < result[j].Item2 ||
-                        (result[i].Item2 == result[j].Item2 && result[i].Item1 > result[j].Item1))
-                    {
-                        var temp = result[i];
-                        result[i] = result[j];
-                        result[j] = temp;
-                    }
-                }
-            }
-
-            Output = result;
-        }
-
-        private string RemovePunctuation(string word)
-        {
-            char[] punctuations = { '.', '!', '?', ',', ':', '"', ';', '–', '(', ')', '[', ']', '{', '}', '/' };
-            string result = "";
-
-            foreach (char c in word)
-            {
-                if (Array.IndexOf(punctuations, c) == -1)
-                {
-                    result += c;
-                }
-            }
-
-            return result;
+                int cmp = b.Item2.CompareTo(a.Item2);
+                if (cmp != 0) return cmp;
+                return a.Item1.CompareTo(b.Item1);
+            });
         }
 
         public override string ToString()
         {
-            if (Output == null || Output.Length == 0)
-                return "";
-
-            string result = "";
-            for (int i = 0; i < Output.Length; i++)
+            if (_output == null || _output.Length == 0) return "";
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < _output.Length; i++)
             {
-                result += $"{Output[i].Item1}: {Math.Round(Output[i].Item2, 4)}";
-                if (i != Output.Length - 1)
-                    result += "\n";
+                sb.Append($"{_output[i].Item1} - {_output[i].Item2:F4}");
+                if (i < _output.Length - 1)
+                    sb.AppendLine();
             }
-
-            return result;
+            return sb.ToString();
         }
     }
 }
