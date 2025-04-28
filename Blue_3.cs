@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace Lab_8
 {
     public class Blue_3 : Blue
@@ -41,22 +40,20 @@ namespace Lab_8
             int i = 0;
             while (i < Input.Length)
             {
-                
-                while (i < Input.Length && !char.IsLetter(Input[i])) i++;
+                while (i < Input.Length && !char.IsLetter(Input[i]))
+                    i++;
 
-             
                 if (i < Input.Length && char.IsLetter(Input[i]))
                 {
                     char c = char.ToLower(Input[i]);
                     counts[c]++;
                     totalWords++;
 
-                   
-                    while (i < Input.Length && Input[i] != ' ') i++;
+                    while (i < Input.Length && Input[i] != ' ')
+                        i++;
                 }
             }
 
-    
             int unique = 0;
             for (int j = 0; j < counts.Length; j++)
             {

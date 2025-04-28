@@ -16,11 +16,12 @@ namespace Lab_8
             _output = new string[0];
         }
 
+
         public override void Review()
         {
             if (Input == null || Input.Trim().Length == 0)
             {
-                _output = new string[0];
+                _output = null;  
                 return;
             }
 
@@ -78,6 +79,7 @@ namespace Lab_8
                 _output[i] = resultLines[i];
             }
         }
+
 
         public override string ToString()
         {
