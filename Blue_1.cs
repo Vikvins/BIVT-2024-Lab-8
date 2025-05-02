@@ -83,14 +83,19 @@ namespace Lab_8
 
         public override string ToString()
         {
-            string result = "";
-            for (int i = 0; i < _output.Length; i++)
+            if (_output == null) return null;
+            else
             {
-                if (i > 0)
-                    result += Environment.NewLine;
-                result += _output[i];
+                string result = "";
+                for (int i = 0; i < _output.Length; i++)
+                {
+                    if (i > 0)
+                        result += Environment.NewLine;
+                    result += _output[i];
+                }
+                return result;
             }
-            return result;
+                
         }
 
     }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Lab_8
 {
@@ -28,13 +25,13 @@ namespace Lab_8
 
         public override void Review()
         {
-            if (string.IsNullOrEmpty(Input))
+            if (string.IsNullOrWhiteSpace(Input))
             {
                 _output = null;
                 return;
             }
 
-            int[] counts = new int[char.MaxValue]; 
+            int[] counts = new int[char.MaxValue];
             int totalWords = 0;
 
             int i = 0;
@@ -43,23 +40,21 @@ namespace Lab_8
                 while (i < Input.Length && !char.IsLetter(Input[i]))
                     i++;
 
-                if (i < Input.Length && char.IsLetter(Input[i]))
-                {
-                    char c = char.ToLower(Input[i]);
-                    counts[c]++;
-                    totalWords++;
+                if (i >= Input.Length) break;
 
-                    while (i < Input.Length && Input[i] != ' ')
-                        i++;
-                }
+                char first = char.ToLower(Input[i]);
+                counts[first]++;
+                totalWords++;
+
+                while (i < Input.Length && char.IsLetter(Input[i]))
+                    i++;
             }
 
+            
             int unique = 0;
             for (int j = 0; j < counts.Length; j++)
-            {
                 if (counts[j] > 0)
                     unique++;
-            }
 
             _output = new (char, double)[unique];
             int index = 0;
@@ -72,6 +67,7 @@ namespace Lab_8
                 }
             }
 
+           
             Array.Sort(_output, (a, b) =>
             {
                 int cmp = b.Item2.CompareTo(a.Item2);
@@ -82,11 +78,15 @@ namespace Lab_8
 
         public override string ToString()
         {
-            if (_output == null || _output.Length == 0) return "";
+            if (_output == null || _output.Length == 0)
+                return "";
+
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < _output.Length; i++)
             {
-                sb.Append($"{_output[i].Item1} - {_output[i].Item2:F4}");
+                sb.Append(_output[i].Item1);
+                sb.Append(" - ");
+                sb.Append(_output[i].Item2.ToString("F4"));
                 if (i < _output.Length - 1)
                     sb.AppendLine();
             }
