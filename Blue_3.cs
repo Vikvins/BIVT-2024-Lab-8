@@ -12,7 +12,7 @@ namespace Lab_8
             get
             {
                 if (_output == null) return null;
-                (char, double)[] copy = new (char, double)[_output.Length];
+                var copy = new (char, double)[_output.Length];
                 Array.Copy(_output, copy, _output.Length);
                 return copy;
             }
@@ -31,65 +31,91 @@ namespace Lab_8
                 return;
             }
 
-            int[] counts = new int[char.MaxValue];
-            int totalWords = 0;
-
-            int i = 0;
-            while (i < Input.Length)
-            {
-                while (i < Input.Length && !char.IsLetter(Input[i]))
-                    i++;
-
-                if (i >= Input.Length) break;
-
-                char first = char.ToLower(Input[i]);
-                counts[first]++;
-                totalWords++;
-
-                while (i < Input.Length && char.IsLetter(Input[i]))
-                    i++;
-            }
+            char[] separators = { ' ', '.', '!', '?', ',', ':', '"', ';', '–', '(', ')', '[', ']', '{', '}', '/' };
 
             
-            int unique = 0;
-            for (int j = 0; j < counts.Length; j++)
-                if (counts[j] > 0)
-                    unique++;
+            string[] words = Input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
-            _output = new (char, double)[unique];
-            int index = 0;
-            for (int j = 0; j < counts.Length; j++)
+            int[] charCounts = new int[char.MaxValue];
+            int totalWords = 0;
+
+            foreach (string word in words)
             {
-                if (counts[j] > 0)
+                if (word.Length == 0) continue;
+
+                char firstChar = char.ToLower(word[0]);
+                if (char.IsLetter(firstChar))
                 {
-                    double percent = Math.Round(counts[j] * 100.0 / totalWords, 4);
-                    _output[index++] = ((char)j, percent);
+                    charCounts[firstChar]++;
+                    totalWords++;
                 }
             }
 
-           
-            Array.Sort(_output, (a, b) =>
+            if (totalWords == 0)
             {
-                int cmp = b.Item2.CompareTo(a.Item2);
-                if (cmp != 0) return cmp;
-                return a.Item1.CompareTo(b.Item1);
-            });
+                _output = Array.Empty<(char, double)>();
+                return;
+            }
+
+            int uniqueLetters = 0;
+            for (int i = 0; i < charCounts.Length; i++)
+            {
+                if (charCounts[i] > 0) uniqueLetters++;
+            }
+
+            
+            _output = new (char, double)[uniqueLetters];
+            int index = 0;
+
+            for (int i = 0; i < charCounts.Length; i++)
+            {
+                if (charCounts[i] > 0)
+                {
+                    double percentage = Math.Round(charCounts[i] * 100.0 / totalWords, 4);
+                    _output[index++] = ((char)i, percentage);
+                }
+            }
+
+            
+            for (int i = 0; i < _output.Length; i++)
+            {
+                for (int j = i + 1; j < _output.Length; j++)
+                {
+                    if (_output[j].Item2 > _output[i].Item2)
+                    {
+                        var temp = _output[i];
+                        _output[i] = _output[j];
+                        _output[j] = temp;
+                    }
+                    else if (_output[j].Item2 == _output[i].Item2)
+                    {
+                        if (_output[j].Item1 < _output[i].Item1)
+                        {
+                            var temp = _output[i];
+                            _output[i] = _output[j];
+                            _output[j] = temp;
+                        }
+                    }
+                }
+            }
         }
 
         public override string ToString()
         {
             if (_output == null || _output.Length == 0)
-                return "";
+                return string.Empty;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (int i = 0; i < _output.Length; i++)
             {
                 sb.Append(_output[i].Item1);
                 sb.Append(" - ");
                 sb.Append(_output[i].Item2.ToString("F4"));
+
                 if (i < _output.Length - 1)
                     sb.AppendLine();
             }
+
             return sb.ToString();
         }
     }

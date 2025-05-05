@@ -13,7 +13,7 @@ namespace Lab_8
 
         public Blue_1(string input) : base(input)
         {
-            _output = new string[0];
+            _output = null;
         }
 
 
