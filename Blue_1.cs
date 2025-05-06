@@ -9,19 +9,18 @@ namespace Lab_8
     public class Blue_1 : Blue
     {
         private string[] _output;
-        public string[] Output => _output;
+        public string[] Output => _output == null ? null : (string[])_output.Clone();
 
         public Blue_1(string input) : base(input)
         {
             _output = null;
         }
 
-
         public override void Review()
         {
             if (Input == null || Input.Trim().Length == 0)
             {
-                _output = null;  
+                _output = null;
                 return;
             }
 
@@ -45,7 +44,7 @@ namespace Lab_8
                 }
             }
 
-            string[] resultLines = new string[wordCount];
+            string[] tempLines = new string[wordCount];
             int lineCount = 0;
             string currentLine = "";
 
@@ -61,7 +60,7 @@ namespace Lab_8
                 }
                 else
                 {
-                    resultLines[lineCount] = currentLine;
+                    tempLines[lineCount] = currentLine;
                     lineCount++;
                     currentLine = word;
                 }
@@ -69,17 +68,16 @@ namespace Lab_8
 
             if (currentLine.Length > 0)
             {
-                resultLines[lineCount] = currentLine;
+                tempLines[lineCount] = currentLine;
                 lineCount++;
             }
 
             _output = new string[lineCount];
             for (int i = 0; i < lineCount; i++)
             {
-                _output[i] = resultLines[i];
+                _output[i] = tempLines[i];
             }
         }
-
 
         public override string ToString()
         {
@@ -95,8 +93,6 @@ namespace Lab_8
                 }
                 return result;
             }
-                
         }
-
     }
 }
